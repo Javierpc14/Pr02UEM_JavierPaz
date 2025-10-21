@@ -26,6 +26,11 @@ public class Camera : MonoBehaviour
     
     void Update()
     {
+        CameraLogic();
+    }
+
+    public void CameraLogic()
+    {
         //leo los valores del raton de X e Y
         float valorX = Input.GetAxis("Mouse X") * cameraSpeed * Time.deltaTime; // cambio los valores en vez de por frame lo cambio a segundos con deltaTime
         float valorY = Input.GetAxis("Mouse Y") * cameraSpeed * Time.deltaTime;
