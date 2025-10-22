@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller; // este controlador se encarga de hacer los movimientos
     public float speed = 15f;
 
+    [Header("Player UI")]
+    public int life = 3;
+
     //para la gravedad utilizo un game object que detecta si esta tocando el suelo o no y creo un Layer para verificar esto
     //[Header("Player gravity")]
     //public float gravityMove = -9.8f;
