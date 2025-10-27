@@ -1448,7 +1448,7 @@ MonoBehaviour:
   runSpeed: 10
   jumpSpeed: 8
   gravity: 20
-  isGrounded: 0
+  isGrounded: 1
   life: 3
   camera: {fileID: 330585545}
   mouseHorizontal: 3
