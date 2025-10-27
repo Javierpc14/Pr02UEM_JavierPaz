@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Camera : MonoBehaviour
+public class CameraPrueba : MonoBehaviour
 {
 
     [Header("Camera movement")]

@@ -1,54 +1,96 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
+
 
 public class PlayerController : MonoBehaviour
 {
+    CharacterController characterController;
 
     [Header("Player movement")]
-    public CharacterController controller; // este controlador se encarga de hacer los movimientos
-    public float speed = 15f;
+    public float walkSpeed = 6.0f;
+    public float runSpeed = 10.0f;
+    public float jumpSpeed = 8.0f;
+    private Vector3 move = Vector3.zero; //inicializa al player en la posicion (0,0,0)-
+
+    [Header("Player gravity")]
+    public float gravity = 20.0f;
+    public bool isGrounded;
 
     [Header("Player UI")]
     public int life = 3;
 
-    //para la gravedad utilizo un game object que detecta si esta tocando el suelo o no y creo un Layer para verificar esto
-    //[Header("Player gravity")]
-    //public float gravityMove = -9.8f;
-    //public Transform floor;// calcula si el player esta tocando el suelo o no para el salto y para detener el valor de gravedad
-    //public float distanceFloor; //esto es un radio que colisiona con el suelo
-    //public LayerMask maskFloor;
-    //bool onFloor;
-    //Vector3 gravitySpeed;
+    [Header("Camera movement")]
+    public Camera camera;
+    public float mouseHorizontal = 3.0f;
+    public float mouseVertical = 3.0f;
+    public float minRotation = -65.0f;
+    public float maxRotation = 65.0f;
+    float h_mouse, v_mouse; //obtener la entrada del raton
+
 
 
     void Start()
     {
-        
+        characterController = GetComponent<CharacterController>();
+
+        // bloqueo el cursor al centro de la pantalla
+        Cursor.lockState = CursorLockMode.Locked;
+        //oculto el cursor al empezar el juego
+        Cursor.visible = false;
     }
 
     void Update()
     {
+        CameraLogic();
         PlayerMovement();
+    }
+
+    public void CameraLogic()
+    {
+        h_mouse = mouseHorizontal * Input.GetAxis("Mouse X");
+        v_mouse += mouseVertical * Input.GetAxis("Mouse Y");
+
+        //limitar el movimiento vertical
+        v_mouse = Mathf.Clamp(v_mouse, minRotation, maxRotation);
+
+        //modificar rotacion local
+        camera.transform.localEulerAngles = new Vector3(-v_mouse, 0, 0);//para invertir el eje vertical
+        transform.Rotate(0, h_mouse, 0); // rotar en el eje horizontal
+
+        
     }
 
     public void PlayerMovement()
     {
-        //esto comprueba si esta tocando el suelo o no
-        //onFloor = Physics.CheckSphere(floor.position, distanceFloor, maskFloor);
+        if (characterController.isGrounded)
+        {
+            isGrounded = true; //por defecto empieza verdadero
 
-        //if (onFloor && gravitySpeed.y < 0)
-        //{
-        //    gravitySpeed.y = -2;
-        //}
-        // obtengo los valores de las teclas w,a,s,d
-        float valorX = Input.GetAxis("Horizontal");
-        float valorZ = Input.GetAxis("Vertical");
+            move = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
 
-        Vector3 move = transform.right * valorX + transform.forward * valorZ;
-        controller.Move(move * speed * Time.deltaTime);
+            //validacion para que el player corra
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                move = transform.TransformDirection(move) * runSpeed;
+            }
+            else
+            {
+                move = transform.TransformDirection(move) * walkSpeed;
+            }
 
-        //// gravedad del personaje
-        //gravitySpeed.y += gravityMove * Time.deltaTime;
-        //controller.Move(gravitySpeed * Time.deltaTime);
+            //salto del player
+            if (Input.GetKey(KeyCode.Space))
+            {
+                move.y = jumpSpeed;
+                isGrounded = false;
+            }
+        }
+
+        //gravedad del player
+        move.y -= gravity * Time.deltaTime;
+        characterController.Move(move * Time.deltaTime);
+
     }
 }

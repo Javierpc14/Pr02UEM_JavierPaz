@@ -9,7 +9,7 @@ public class LifeBar : MonoBehaviour
 
     void Start()
     {
-        playerController = GameObject.Find("Player").GetComponent<PlayerController>(); //busco al jugador por el nombre y obtengo su script
+        playerController = GameObject.Find("PlayerBody").GetComponent<PlayerController>(); //busco al jugador por el nombre y obtengo su script
         maxLife = playerController.life; //obtengo las vidas que tiene el personaje al inicio
     }
 
